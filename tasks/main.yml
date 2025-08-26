@@ -1,0 +1,46 @@
+---
+
+- name: Setup root directory
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ cicd_owner }}"
+    group: "{{ cicd_group }}"
+    mode: "{{ cicd_mode | default('0755') }}"
+  become: yes
+  loop:
+    - "{{ cicd_root }}"
+    - "{{ cicd_root }}/bin"
+
+- name: Setup directory structure
+  ansible.builtin.file:
+    path: "{{ cicd_root }}/{{ item }}"
+    state: directory
+    owner: "{{ cicd_owner }}"
+    group: "{{ cicd_group }}"
+    mode: "{{ cicd_mode | default('0755') }}"
+  become: yes
+  loop: "{{ lookup('filetree', 'files/') | json_query('[?state==`directory`].path') | unique }}"
+
+- name: Distribute files
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/{{ item }}"
+    dest: "{{ cicd_root }}/{{ item }}"
+    owner: "{{ cicd_owner }}"
+    group: "{{ cicd_group }}"
+    mode: "{{ '0755' if item is search('\\.sh') else '0644' }}"
+    local_follow: true
+    backup: "{{ cicd_backup_files | default(False) }}"
+  become: yes
+  loop: "{{ lookup('filetree', 'files/') | json_query('[?state==`file` || state==`link`].path') }}"
+
+- name: Setup symbolic links
+  ansible.builtin.file:
+    state: link
+    src: "../{{ item.src }}"
+    dest: "{{ cicd_root }}/{{ item.dest if item.dest is not search('/$') else (item.dest + item.src | basename) }}"
+    owner: "{{ cicd_owner }}"
+    group: "{{ cicd_group }}"
+    force: true
+  become: yes
+  loop: "{{ cicd_links }}"

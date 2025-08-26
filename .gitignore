@@ -1,0 +1,5 @@
+.git.include
+defaults/defaults-*
+*.bak
+/test.sh
+/.ansible/

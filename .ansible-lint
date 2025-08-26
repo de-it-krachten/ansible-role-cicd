@@ -1,0 +1,8 @@
+---
+
+exclude_paths:
+  - molecule/
+
+skip_list:
+  - var-naming[no-reserved]
+  - jinja[spacing]
