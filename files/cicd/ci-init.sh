@@ -104,6 +104,7 @@ Flags :
 #   -f|--fedora      : Support Fedora
    -F|--force       : Force updating existing files
    -i|--initialize  : Initialize repository
+   -m|--mode <mode> : Mode to operate in (collection/role/playbook)
    -s|--self-hosted : Use self-hosted runners
    -u|--upload      : Upload collection to galaxy
 
@@ -231,6 +232,9 @@ do
     i|initialize)
       Initialize=true
       ;;
+    m|mode)
+      Mode=$OPTARG
+      ;;
     s|self-hosted)
       Github_self_hosted=true
       ;;
@@ -254,9 +258,25 @@ do
 done
 shift $(($OPTIND -1))
 
-case $BASENAME1 in
-  ci-init-ansible-collection.sh)
-    Mode=collection
+# Perform mode to operate in based on execution scriptname
+if [[ -z $Mode ]]
+then
+  case $BASENAME1 in
+    ci-init-ansible-collection.sh)
+      Mode=collection
+      ;;
+    ci-init-ansible-role.sh)
+      Mode=role
+      ;;
+    ci-init-ansible-playbooks.sh)
+      Mode=playbook
+      ;;
+  esac
+fi
+
+# Set mode-specific settings
+case $Mode in
+  collection)Y
     Template=ansible-collection
     Name=$(basename $PWD)
     Name_short=$(echo $Name | sed "s/${Template}-//")
@@ -264,8 +284,7 @@ case $BASENAME1 in
     Collection_short=$Name_short
     export Name Name_short Collection Collection_short
     ;;
-  ci-init-ansible-role.sh)
-    Mode=role
+  role)
     Template=ansible-role
     Name=$(basename $PWD)
     Name_short=$(echo $Name | sed "s/${Template}-//")
@@ -273,14 +292,21 @@ case $BASENAME1 in
     Role_short=$Name_short
     export Name Name_short Role Role_short 
     ;;
-  ci-init-ansible-playbooks.sh)
-    Mode=playbook
+  playbook)
     Template=ansible-playbooks
     Name=$(basename $PWD)
     Name_short=$(echo $Name | sed "s/${Template}-//")
     Playbook=$Name
     Playbook_short=$Name_short
     export Name Name_short Playbook Playbook_short
+    ;;
+  '')
+    echo "No mode provided!" >&2
+    exit 1
+    ;;
+  *)
+    echo "Unsupported mode '$Mode' provided!" >&2
+    exit 1
     ;;
 esac
 
