@@ -152,6 +152,7 @@ function Update_from_template
     exit 1
   fi
 
+  cp ${DIRNAME}/common/*.j2 /tmp
   cp ${DIRNAME}/${Template}/${Source}.j2 /tmp
 
   if e2j2 -f /tmp/${Source}.j2
@@ -191,7 +192,7 @@ Collection_upload=false
 
 
 # parse command line into arguments and check results of parsing
-while getopts :c:dDfFhisuv-: OPT
+while getopts :c:dDfFhim:suv-: OPT
 do
 
   # Support long options
