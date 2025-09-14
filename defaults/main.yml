@@ -34,3 +34,5 @@ cicd_links:
   - { src: bin/functions_ansible.sh, dest: ansible/functions_ansible.sh }
   - { src: bin/functions.sh, dest: molecule/functions.sh }
   - { src: bin/functions_ansible.sh, dest: molecule/functions_ansible.sh }
+  - { src: github/clone-tree.sh, dest: bin/github-clone-tree.sh }
+  - { src: github/make-repo.sh, dest: bin/github-make-repo.sh }

@@ -69,6 +69,7 @@ cicd_links:
   - { src: cicd/ci-init.sh, dest: bin/ci-init-ansible-collection.sh }
   - { src: cicd/ci-init.sh, dest: bin/ci-init-ansible-playbooks.sh }
   - { src: cicd/ci-init.sh, dest: bin/ci-init-ansible-role.sh }
+  - { src: cicd/ci-init.sh, dest: bin/ }
   - { src: cicd/ci-init-docker.sh, dest: bin/ }
   - { src: docker/docker-clean.sh, dest: bin/ }
   - { src: generic/functions.sh, dest: bin/ }
@@ -80,6 +81,8 @@ cicd_links:
   - { src: bin/functions_ansible.sh, dest: ansible/functions_ansible.sh }
   - { src: bin/functions.sh, dest: molecule/functions.sh }
   - { src: bin/functions_ansible.sh, dest: molecule/functions_ansible.sh }
+  - { src: github/clone-tree.sh, dest: bin/github-clone-tree.sh }
+  - { src: github/make-repo.sh, dest: bin/github-make-repo.sh }
 </pre></code>
 
 

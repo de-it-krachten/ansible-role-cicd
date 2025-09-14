@@ -461,18 +461,18 @@ function Execute_molecule
     export ANSIBLE_FORCE_COLOR=0
   fi
 
-  case $Mode in
-    test)
-      Molecule_args="--destroy=$Destroy --scenario-name=$Scenario"
-      ;;
-    *)
-      Molecule_args="--scenario-name=$Scenario"
-      ;;
-  esac
+  Molecule_args="--scenario-name=$Scenario"
+  [[ $Mode == test ]] && Molecule_args+=" --destroy=$Destroy"
 
   Cmd=$(echo molecule $Verbose1 $Args $Mode $Molecule_args)
 
-  [[ $Verbose == true ]] && echo "Executing '$Cmd'"
+  if [[ $Verbose == true ]]
+  then
+    echo "################################################################################"
+    echo "Executing '$Cmd'"
+    echo "################################################################################"
+  fi
+
   [[ $Dry_run == true ]] && return 0
 
   # Execute the command
@@ -623,6 +623,7 @@ Fail_on_warning=false
 Scenarios=default
 Scenario=default
 Modes=test
+
 Pre_dependency=false
 Verbose_level=0
 Log=true
