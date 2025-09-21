@@ -1,0 +1,26 @@
+---
+
+- name: Install RPM on RedHat family
+  when: ansible_os_family == 'RedHat'
+  block:
+
+    - name: Install package using dnf
+      ansible.builtin.dnf:
+        name: "{{ cicd_repo }}/releases/download/{{ cicd_version }}/{{ cicd_package_rpm }}"
+        state: present
+        disable_gpg_check: true
+
+- name: Install DEB on Debian family
+  when: ansible_os_family == 'Debian'
+  block:
+
+    - name: Download package
+      ansible.builtin.get_url:
+        url: "{{ cicd_repo }}/releases/download/{{ cicd_version }}/{{ cicd_package_deb }}"
+        dest: "/tmp/{{ cicd_package_deb }}"
+        mode: "0644"
+
+    - name: Install package using apt
+      ansible.builtin.apt:
+        deb: "/tmp/{{ cicd_package_deb }}"
+        state: present
