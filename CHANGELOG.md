@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/de-it-krachten/ansible-role-cicd/compare/v1.0.1...v1.1.0) (2025-10-13)
+
+
+### Features
+
+* Move scripts to separate DEB/RPM package ([ca57a1b](https://github.com/de-it-krachten/ansible-role-cicd/commit/ca57a1bbbbfcfc02848349f98eb8d205c64f0fbe))
+
 ## [1.0.1](https://github.com/de-it-krachten/ansible-role-cicd/compare/v1.0.0...v1.0.1) (2025-09-03)
 
 
