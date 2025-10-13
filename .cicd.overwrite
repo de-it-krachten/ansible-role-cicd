@@ -9,7 +9,7 @@ generic:
   collections: []
 
 # Supported platforms
-#platforms:
+platforms:
 #  rhel8:
 #    ci: false
 #    supported: false
@@ -67,9 +67,9 @@ generic:
 #  debian10:
 #    ci: false
 #    supported: false
-#  debian11:
-#    ci: false
-#    supported: false
+  debian11:
+    ci: false
+    supported: false
 #  debian12:
 #    ci: false
 #    supported: false

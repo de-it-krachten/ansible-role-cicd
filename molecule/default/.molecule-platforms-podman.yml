@@ -74,7 +74,7 @@
   ci: false
   image: docker.io/geerlingguy/docker-debian10-ansible:latest
 - name: debian11
-  ci: true
+  ci: false
   image: docker.io/geerlingguy/docker-debian11-ansible:latest
 - name: debian12
   ci: true

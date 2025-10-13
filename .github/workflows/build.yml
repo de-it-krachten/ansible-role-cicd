@@ -1,0 +1,134 @@
+name: Build Native Packages
+
+on:
+  workflow_run:
+    workflows: ["Release"]   # 👈 must match the name in release.yml
+    types:
+      - completed
+  workflow_dispatch:
+    inputs:
+      package_name:
+        description: "Package name"
+        required: false
+        default: "cicd-tools"
+      target_prefix:
+        description: "Install location"
+        required: false
+        default: "/opt/cicd-tools"
+
+jobs:
+  get-version:
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_tag.outputs.version }}
+    steps:
+      - name: Install GitHub CLI
+        run: sudo apt-get update && sudo apt-get install -y gh
+
+      - name: Get latest release version
+        id: get_tag
+        run: |
+          VERSION=$(gh release view --json tagName -q .tagName | sed 's/^v//')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-packages:
+    needs: get-version
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    env:
+      TARGET_PREFIX: ${{ github.event.inputs.target_prefix || '/usr/local/bin' }}
+      PACKAGE_NAME: ${{ github.event.inputs.package_name || 'my-scripts' }}
+      VERSION: ${{ needs.get-version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential debhelper devscripts rpm gh
+
+      # -------------------
+      # Build .deb
+      # -------------------
+      - name: Prepare deb structure
+        run: |
+          mkdir -p build/debian/DEBIAN
+          mkdir -p build/debian${TARGET_PREFIX}
+          cp -r scripts/* build/debian${TARGET_PREFIX}/
+
+          cat > build/debian/DEBIAN/control <<EOF
+          Package: ${PACKAGE_NAME}
+          Version: ${VERSION}
+          Section: utils
+          Priority: optional
+          Architecture: all
+          Maintainer: DevOps Team <devops@example.com>
+          Description: Collection of custom utility scripts
+          EOF
+
+      - name: Build deb
+        run: dpkg-deb --build build/debian ${PACKAGE_NAME}_${VERSION}.deb
+
+      # -------------------
+      # Build .rpm
+      # -------------------
+      - name: Prepare rpm structure
+        run: |
+          mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+          tar czf ~/rpmbuild/SOURCES/${PACKAGE_NAME}.tar.gz scripts/
+
+          cat > ~/rpmbuild/SPECS/${PACKAGE_NAME}.spec <<EOF
+          Name: ${PACKAGE_NAME}
+          Version: ${VERSION}
+          Release: 1%{?dist}
+          Summary: Collection of custom utility scripts
+          License: MIT
+          URL: https://example.com/${PACKAGE_NAME}
+          BuildArch: noarch
+
+          %description
+          Collection of custom utility scripts.
+
+          %prep
+          %setup -q -n scripts
+
+          %install
+          mkdir -p %{buildroot}${TARGET_PREFIX}
+          cp -a * %{buildroot}${TARGET_PREFIX}/
+
+          %files
+          ${TARGET_PREFIX}/*
+
+          %changelog
+          * $(date +"%a %b %d %Y") DevOps Team <devops@example.com> - ${VERSION}-1
+          - Initial package
+          EOF
+
+      - name: Build rpm
+        run: rpmbuild -ba ~/rpmbuild/SPECS/${PACKAGE_NAME}.spec
+
+      # -------------------
+      # Upload artifacts (optional debugging)
+      # -------------------
+      - uses: actions/upload-artifact@v4
+        with:
+          name: built-packages
+          path: |
+            ${PACKAGE_NAME}_*.deb
+            ~/rpmbuild/RPMS/noarch/*.rpm
+
+      # -------------------
+      # Attach to GitHub Release
+      # -------------------
+      - name: Upload to GitHub Release
+        run: |
+          gh release upload "v${VERSION}" \
+            ${PACKAGE_NAME}_${VERSION}.deb \
+            ~/rpmbuild/RPMS/noarch/*.rpm \
+            --clobber
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
