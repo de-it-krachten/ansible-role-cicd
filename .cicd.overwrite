@@ -10,18 +10,6 @@ generic:
 
 # Supported platforms
 platforms:
-  sles15:
-    supported: true
-    ci: false
-  sles16:
-    supported: true
-    ci: false
-  opensuse15:
-    supported: true
-    ci: true
-  opensuse16:
-    supported: true
-    ci: true
   debian11:
     supported: false
     ci: false
