@@ -1,5 +1,10 @@
 ---
 
+- name: Install requirements
+  ansible.builtin.package:
+    name: "{{ cicd_dependency_packages }}"
+    state: present
+    
 - name: Install RPM on RedHat family
   when: ansible_os_family == 'RedHat'
   block:

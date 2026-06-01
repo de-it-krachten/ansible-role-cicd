@@ -9,6 +9,11 @@ cicd_api: https://api.github.com/repos/de-it-krachten/cicd-tools
 # Version to install
 cicd_version: latest
 
+# Package dependencies
+cicd_dependency_packages:
+  - jq
+  - git
+
 # Packages
 cicd_package_deb: "cicd-tools_{{ cicd_version | regex_replace('^v') }}.deb"
 cicd_package_rpm: "cicd-tools-{{ cicd_version | regex_replace('^v') }}-1.noarch.rpm"
