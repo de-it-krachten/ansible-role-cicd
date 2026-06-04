@@ -35,8 +35,9 @@ Supported platforms
 - Debian 13 (Trixie)
 - Ubuntu 22.04 LTS
 - Ubuntu 24.04 LTS
-- Fedora 42
+- Ubuntu 26.04 LTS
 - Fedora 43
+- Fedora 44<sup>1</sup>
 
 Note:
 <sup>1</sup> : no automated testing is performed on these platforms
@@ -53,6 +54,11 @@ cicd_api: https://api.github.com/repos/de-it-krachten/cicd-tools
 
 # Version to install
 cicd_version: latest
+
+# Package dependencies
+cicd_dependency_packages:
+  - jq
+  - git
 
 # Packages
 cicd_package_deb: "cicd-tools_{{ cicd_version | regex_replace('^v') }}.deb"
