@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/de-it-krachten/ansible-role-cicd/compare/v1.2.0...v1.2.1) (2026-07-27)
+
+
+### Bug Fixes
+
+* Workaround for RPM installation ([fb4645f](https://github.com/de-it-krachten/ansible-role-cicd/commit/fb4645f65170891f436389459b1ba25a102f47cb))
+
 # [1.2.0](https://github.com/de-it-krachten/ansible-role-cicd/compare/v1.1.0...v1.2.0) (2026-06-04)
 
 
