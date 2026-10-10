@@ -19,6 +19,7 @@
       ansible.builtin.dnf:
         name: /tmp/{{ cicd_package_rpm }}
         state: present
+        disable_gpg_check: true
 
 - name: Install DEB on Debian family
   when: ansible_facts.os_family == 'Debian'
