@@ -9,30 +9,29 @@
   when: ansible_facts.os_family == 'RedHat'
   block:
 
-    - name: Download package
+    - name: Download RPM package
       ansible.builtin.get_url:
         url: "{{ cicd_repo }}/releases/download/{{ cicd_version }}/{{ cicd_package_rpm }}"
         dest: "/tmp/{{ cicd_package_rpm }}"
         mode: "0644"
 
-    - name: Install package using dnf  # noqa command-instead-of-module
-      ansible.builtin.command:
-        cmd: rpm -i /tmp/{{ cicd_package_rpm }}
-      changed_when: __rpm.rc == 0 or (__rpm.rc > 0 and __rpm.stderr is not search('is already installed'))
-      failed_when: __rpm.rc > 0 and __rpm.stderr is not search('is already installed')
-      register: __rpm
+    - name: Install package using DNF
+      ansible.builtin.dnf:
+        name: /tmp/{{ cicd_package_rpm }}
+        state: present
+        disable_gpg_check: true
 
 - name: Install DEB on Debian family
   when: ansible_facts.os_family == 'Debian'
   block:
 
-    - name: Download package
+    - name: Download APT package
       ansible.builtin.get_url:
         url: "{{ cicd_repo }}/releases/download/{{ cicd_version }}/{{ cicd_package_deb }}"
         dest: "/tmp/{{ cicd_package_deb }}"
         mode: "0644"
 
-    - name: Install package using apt
+    - name: Install package using APT
       ansible.builtin.apt:
         deb: "/tmp/{{ cicd_package_deb }}"
         state: present
