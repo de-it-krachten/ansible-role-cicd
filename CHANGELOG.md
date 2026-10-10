@@ -1,3 +1,11 @@
+## [1.2.2](https://github.com/de-it-krachten/ansible-role-cicd/compare/v1.2.1...v1.2.2) (2026-10-10)
+
+
+### Bug Fixes
+
+* Disable GPG check for RPM installations ([8991262](https://github.com/de-it-krachten/ansible-role-cicd/commit/8991262930ed5413d8b89a085329205e4c4d815f))
+* Use dnf instad of rpm ([c9752d5](https://github.com/de-it-krachten/ansible-role-cicd/commit/c9752d5699f04eabd1b89a5d546a2a7844328209))
+
 ## [1.2.1](https://github.com/de-it-krachten/ansible-role-cicd/compare/v1.2.0...v1.2.1) (2026-07-27)
 
 
