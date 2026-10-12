@@ -8,12 +8,6 @@ generic:
     Set of scripts to help setup CI/CD
   collections: []
 
-# Supported platforms
-platforms:
-  debian11:
-    supported: false
-    ci: false
-
 # Molecule
 molecule:
   requirements:
