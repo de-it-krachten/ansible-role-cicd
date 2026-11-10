@@ -63,6 +63,11 @@ cicd_dependency_packages:
 # Packages
 cicd_package_deb: "cicd-tools_{{ cicd_version | regex_replace('^v') }}.deb"
 cicd_package_rpm: "cicd-tools-{{ cicd_version | regex_replace('^v') }}-1.noarch.rpm"
+
+# Python virtual environment
+cicd_python_venv_install: false
+cicd_python_venv_root: /usr/local/venv
+cicd_python_venv_list: []
 </pre></code>
 
 
@@ -74,6 +79,12 @@ cicd_package_rpm: "cicd-tools-{{ cicd_version | regex_replace('^v') }}-1.noarch.
 - name: sample playbook for role 'cicd'
   hosts: all
   become: 'yes'
+  vars:
+    molecule_driver: '{{ lookup(''env'', ''MOLECULE_DRIVER_NAME'') }}'
+    cicd_python_venv_install: true
+    cicd_python_venv_list:
+      - yq
+      - e2j2
   tasks:
     - name: Include role 'cicd'
       ansible.builtin.include_role:

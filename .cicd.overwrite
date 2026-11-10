@@ -12,6 +12,12 @@ generic:
 molecule:
   requirements:
     roles_extra: []
+  converge:
+    vars:
+      cicd_python_venv_install: true
+      cicd_python_venv_list:
+        - yq
+        - e2j2
 
 # Templates
 ci_templates:

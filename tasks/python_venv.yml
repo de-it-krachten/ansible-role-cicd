@@ -1,0 +1,16 @@
+---
+
+- name: Install python virtual environments
+  ansible.builtin.shell:
+    cmd: |
+      exec > /tmp/python-setup-venvs.log 2>&1
+      VENV_LIST="{{ cicd_python_venv_list | join(' ') }}"
+      [[ -n $VENV_LIST ]] && export VENV_LIST
+      /opt/cicd-tools/bin/python-setup-venvs.sh {{ cicd_python_venv_root }}
+  args:
+    executable: /bin/bash
+  register: __python_venv
+
+#- name: Show script output
+#  ansible.builtin.debug:
+#    msg: "{{ __python_venv.stdout_lines }}"

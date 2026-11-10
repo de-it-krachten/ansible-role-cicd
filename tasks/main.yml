@@ -6,3 +6,5 @@
 - name: Install the requested release
   ansible.builtin.include_tasks: install.yml
 
+- name: Setup python virtual environments
+  ansible.builtin.include_tasks: python_venv.yml
